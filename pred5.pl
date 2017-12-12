@@ -1,4 +1,3 @@
-% iii iio
-delete_one(_,[],[]):-!.
-delete_one(X,[X|T],T):-!.
-delete_one(X,[Y|T],[Y|TY]):-delete_one(X,T,TY).
+% iii iio ioi oii ooi
+delete_one(E,[E|T],T).
+delete_one(E,[X|T],[X|T1]):-delete_one(E,T,T1).
