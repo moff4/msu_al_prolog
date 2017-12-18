@@ -40,8 +40,8 @@ min_path(X,Y,L) :- findall(L1, path(X,Y,L1), L2), min_cost(L2,MC), min_path1(L2,
 min_cost([P],C) :- cost(P,C).
 min_cost([P|T],C) :- cost(P,C1), min_cost(T,C2), C is min(C1,C2).
 
-min_path1([P|T],MC,P) :- cost(P,MC).
-min_path1([P|T],MC,R) :- min_path1(T,MC,R).
+min_path1([P|_],MC,P) :- cost(P,MC).
+min_path1([_|T],MC,R) :- min_path1(T,MC,R).
 
 
 % 18 --------------------------------------------------------------------------
@@ -57,15 +57,23 @@ bfs([[V|Path]|T], Y, L) :-  findall( [V1,V|Path],
 							append(T,New,Ps),!,
 							bfs(Ps, Y, L).
 
-variants(Len, [[Y|Path]|T], Y, L) :- length([Y|Path], Len1), Len1 = Len, reverse([Y|Path], L).
+variants(Len, [[Y|Path]|_], Y, L) :- length([Y|Path], Len1), Len1 = Len, reverse([Y|Path], L).
 variants(Len, [_|T], Y, L) :- variants(Len, T, Y, L).
 
 
 % 19 --------------------------------------------------------------------------
 % Цикличен если в графе существует такое ребро (a,b), что существует больше одного пути из a в b.
-cyclic :- findall((X,Y),edge(X,Y,_),L), cyclic1(L).
+%cyclic :- findall((X,Y),edge(X,Y,_),L), cyclic1(L).
+%cyclic1([(X,Y)|T]) :- findall(P,path(X,Y,P),LP), length(LP,L), L>1.
 
-cyclic1([(X,Y)|T]) :- findall(P,path(X,Y,P),LP), length(LP,L), L>1.
+cyclic() :- edge1(X,_,_), edge1(Y,_,_),X\=Y, search(X,Y,W1), search(X,Y,W2), dif(W1,W2), !.
+
+edge1(X, Y, C) :- edge(X, Y, C); edge(Y, X, C).
+
+search(X, Y, Way) :- s1(X, Y, WayR, [X]), reverse(WayR, Way).
+s1(X, X, W, W).
+s1(X, Y, Way, L) :- edge1(X, Z, _), not(member(Z, L)), s1(Z, Y, Way, [Z|L]). 
+
 
 
 % 20 --------------------------------------------------------------------------
