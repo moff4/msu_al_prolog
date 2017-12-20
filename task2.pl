@@ -36,6 +36,13 @@ parent(olga,arnold).
 parent(andrey,arnold).
 
 
+suprug(zina,kosty).
+suprug(ira,tomas).
+suprug(alice,bob).
+suprug(eva,petr).
+suprug(marge,max).
+suprug(olga,andrey).
+
 male(max).
 male(bob).
 male(kosty).
@@ -58,6 +65,8 @@ female(jane).
 female(kira).
 female(sveta).
 
+spouses(X,Y):-suprug(X,Y).
+spouses(X,Y):-suprug(Y,Y).
 
 % HERE IS DATABASE -------
 
@@ -67,6 +76,11 @@ mother(X,Y):-parent(X,Y),female(X).
 % ii io oi
 father(X,Y):-parent(X,Y),male(X).
 
+% NEED TESTING 
 % ii io oi
 grandparent(X,Y):-parent(X,Z),parent(Z,Y).
+
+% NEED TESTING 
+% ii io oi
+grandchild(X,Y):-grandparent(Y,X).
 
