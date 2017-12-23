@@ -77,8 +77,8 @@ whoarethey(X,Y,'шурин'):-whoarethey(Y,X,'зять'),male(Y).
 whoarethey(X,Y,'зять'):-spouses(X,Z),brother(Z,Y),male(Y).
 whoarethey(X,Y,'свояченица'):-whoarethey(Y,X,'зять'),male(Y).
 
-whoarethey(X,Y,сват):-father(X,Z),spouses(Z,Q),parent(Y,Q).
-whoarethey(X,Y,сватья):-mother(X,Z),spouses(Z,Q),parent(Y,Q).
+whoarethey(X,Y,'сват'):-father(X,Z),spouses(Z,Q),parent(Y,Q).
+whoarethey(X,Y,'сватья'):-mother(X,Z),spouses(Z,Q),parent(Y,Q).
 
 % ----------------------- УНИВЕРСАЛЬНАЯ ШТУКА ДЛЯ ВСЕХ ОСТАЛЬНЫХ --------------
 % ----------------------- ИЗМЕНЕНИЯ БД ----------------------------------------
@@ -116,5 +116,5 @@ add_female(X):-assert_female(X,_).     % меняет пол человека н
 %i  - выводит все родственные отношения для X
 show_all_relatives(X):-how_they_relate(X,_).
 
-% ii - пишет в кем является X для всех родствеников
+% ii - пишет кем является X для всех своих родствеников
 how_they_relate(X,Y):-whoarethey(Y,X,S),write(X),write(' - '),write(S),write(' для '),write(Y).
