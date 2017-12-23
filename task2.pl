@@ -1,5 +1,5 @@
+:-['database.pl'].
 :- dynamic male/1,female/1,parent/2,suprug/2.
-['database.pl'].
 
 % ----------------------- САМОЕ ПРОСТОЕ ---------------------------------------
 
@@ -59,23 +59,23 @@ whoarethey(X,Y,'двоюродный брат'):-aunt(X,Z),parent(Z,Y),male(Y).
 whoarethey(X,Y,'двоюродная сестра'):-aunt(X,Z),parent(Z,Y),female(Y).
 
 % by marrige
-whoarethey(X,Y,'сноха'):-spouses(X,Z),mother(Y,Z),female(X).
-whoarethey(X,Y,'свекровь'):-whoarethey(Y,X,'сноха'),female(X).
-whoarethey(X,Y,'невестка'):-spouses(X,Z),father(Y,Z),female(X).
-whoarethey(X,Y,'свёкр'):-whoarethey(Y,X,'невестка'),female(X).
-whoarethey(X,Y,'невестка'):-spouses(X,Z),sister(Z,Y),female(X).
-whoarethey(X,Y,'золовка'):-whoarethey(Y,X,'невестка'),female(X).
-whoarethey(X,Y,'невестка'):-spouses(X,Z),brother(Z,Y),female(X).
-whoarethey(X,Y,'деверь'):-whoarethey(Y,X,'невестка'),female(X).
+whoarethey(X,Y,'сноха'):-spouses(X,Z),mother(Y,Z),female(Y).
+whoarethey(X,Y,'свекровь'):-whoarethey(Y,X,'сноха'),female(Y).
+whoarethey(X,Y,'невестка'):-spouses(X,Z),father(Y,Z),female(Y).
+whoarethey(X,Y,'свёкр'):-whoarethey(Y,X,'невестка'),female(Y).
+whoarethey(X,Y,'невестка'):-spouses(X,Z),sister(Z,Y),female(Y).
+whoarethey(X,Y,'золовка'):-whoarethey(Y,X,'невестка'),female(Y).
+whoarethey(X,Y,'невестка'):-spouses(X,Z),brother(Z,Y),female(Y).
+whoarethey(X,Y,'деверь'):-whoarethey(Y,X,'невестка'),female(Y).
 
-whoarethey(X,Y,'зять'):-spouses(X,Z),mother(Y,Z),male(X).
-whoarethey(X,Y,'тёща'):-whoarethey(Y,X,'зять'),male(X).
-whoarethey(X,Y,'зять'):-spouses(X,Z),father(Y,Z),male(X).
-whoarethey(X,Y,'тесть'):-whoarethey(Y,X,'зять'),male(X).
-whoarethey(X,Y,'зять'):-spouses(X,Z),sister(Z,Y),male(X).
-whoarethey(X,Y,'шурин'):-whoarethey(Y,X,'зять'),male(X).
-whoarethey(X,Y,'зять'):-spouses(X,Z),brother(Z,Y),male(X).
-whoarethey(X,Y,'свояченица'):-whoarethey(Y,X,'зять'),male(X).
+whoarethey(X,Y,'зять'):-spouses(X,Z),mother(Y,Z),male(Y).
+whoarethey(X,Y,'тёща'):-whoarethey(Y,X,'зять'),male(Y).
+whoarethey(X,Y,'зять'):-spouses(X,Z),father(Y,Z),male(Y).
+whoarethey(X,Y,'тесть'):-whoarethey(Y,X,'зять'),male(Y).
+whoarethey(X,Y,'зять'):-spouses(X,Z),sister(Z,Y),male(Y).
+whoarethey(X,Y,'шурин'):-whoarethey(Y,X,'зять'),male(Y).
+whoarethey(X,Y,'зять'):-spouses(X,Z),brother(Z,Y),male(Y).
+whoarethey(X,Y,'свояченица'):-whoarethey(Y,X,'зять'),male(Y).
 
 whoarethey(X,Y,сват):-father(X,Z),spouses(Z,Q),parent(Y,Q).
 whoarethey(X,Y,сватья):-mother(X,Z),spouses(Z,Q),parent(Y,Q).
@@ -117,4 +117,4 @@ add_female(X):-assert_female(X,_).     % меняет пол человека н
 show_all_relatives(X):-how_they_relate(X,_).
 
 % ii - пишет в кем является X для всех родствеников
-how_they_relate(X,Y):-whoarethey(Y,X,S),write(X),write(' является '),write(S),write(' для '),write(Y).
+how_they_relate(X,Y):-whoarethey(Y,X,S),write(X),write(' - '),write(S),write(' для '),write(Y).
