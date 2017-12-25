@@ -47,6 +47,10 @@ whoarethey(X,Y,'сын'):- son(Y,X).
 % second step
 whoarethey(X,Y,'тетя'):- aunt(X,Y).
 whoarethey(X,Y,'дядя'):- uncle(X,Y).
+whoarethey(X,Y,'племянник'):- uncle(Y,X),male(X).
+whoarethey(X,Y,'племянник'):- aunt(X,Y),male(X).
+whoarethey(X,Y,'племянница'):- uncle(Y,X),female(X).
+whoarethey(X,Y,'племянница'):- aunt(X,Y),female(X).
 whoarethey(X,Y,'бабушка'):- grandparent(X,Y),female(X).
 whoarethey(X,Y,'дедушка'):- grandparent(X,Y),male(X).
 whoarethey(X,Y,'внук'):- grandchild(X,Y),male(Y).
@@ -83,7 +87,8 @@ whoarethey(X,Y,'сватья'):-mother(X,Z),spouses(Z,Q),parent(Y,Q).
 % ----------------------- УНИВЕРСАЛЬНАЯ ШТУКА ДЛЯ ВСЕХ ОСТАЛЬНЫХ --------------
 % ----------------------- ИЗМЕНЕНИЯ БД ----------------------------------------
 
-
+assert_spouses(X,Y,error):-spouses(X,Z),Z \= Y,write(X),write(' уже состоит в браке с '),write(Z),!.
+assert_spouses(X,Y,error):-spouses(Y,Z),Z \= X,write(Y),write(' уже состоит в браке с '),write(Z),!.
 assert_spouses(X,Y,success):-male(X),female(Y),asserta(suprug(X,Y)),write('теперь '),write(X),write(' и '),write(Y),write(' - одна большая семья :3'),!.
 assert_spouses(X,Y,success):-female(X),male(Y),asserta(suprug(X,Y)),write('теперь '),write(X),write(' и '),write(Y),write(' - одна большая семья :3'),!.
 assert_spouses(X,Y,not_exists):-write('Уверены, что существуют '),write(X),write(' и '),write(Y),write(' (да еще и разных полов) ?'),!.
@@ -92,13 +97,13 @@ assert_parent(X,Y,success):-exsist(X),exsist(Y),asserta(parent(X,Y)),write('те
 assert_parent(X,Y,not_exists):-write('Уверены, что существуют '),write(X),write(' и '),write(Y),write('?'),!.
 
 assert_male(X,error):-female(X),spouses(X,_),write(' противоречие мужчина не может быть женат на мужчине'),!. 
-assert_male(X,already):-male(X),write(' уже добавлено '),!. 
+assert_male(X,already):-male(X),write('Уже добавлено '),!. 
 assert_male(X,success):-retract(female(X)),asserta(male(X)),write(' пол '),write(X),write(' изменен на мужской'),!. 
 assert_male(X,success):-asserta(male(X)),write(' пол '),write(X),write(' изменен на мужской'),!.
 
 
 assert_female(X,error):-male(X),spouses(X,_),write(' противоречие женщина не может быть замужем за женщиной'),!. 
-assert_female(X,already):-female(X),write(' уже добавлено '),!. 
+assert_female(X,already):-female(X),write('Уже добавлено '),!. 
 assert_female(X,success):-retract(male(X)),asserta(female(X)),write(' пол '),write(X),write(' изменен на женский'),!. 
 assert_female(X,success):-asserta(female(X)),write(' пол '),write(X),write(' изменен на женский'),!.
 
@@ -118,3 +123,76 @@ show_all_relatives(X):-how_they_relate(X,_).
 
 % ii - пишет кем является X для всех своих родствеников
 how_they_relate(X,Y):-whoarethey(Y,X,S),write(X),write(' - '),write(S),write(' для '),write(Y).
+
+
+% ---
+
+
+% ----------------------- ПОЛЬЗОВАТЕЛЬСКИЙ ИНТЕРФЕЙС ------------------------
+% ----------------------- НАСТОЯЩИЙ ИНТЕРФЕЙС -------------------------------
+
+
+run(0).
+run(1):-
+	write_ln('Введите имя человека:'),
+	read(Y),
+	write_ln('Введите вид родственной связи:'),
+	read(S),
+	findall([X,' -- ',S,' для ',Y],whoarethey(Y,X,S),L),
+	foreach(member(Q, L),write_ln(Q)),
+	main(_).
+run(2):-write_ln('Введите имя'),
+	read(X),
+	findall([S,' для ',Y],whoarethey(Y,X,S),L),
+	foreach(member(Q, L),write_ln(Q)),
+	main(_).
+run(3):-
+	write_ln('Введите два имя:'),
+	read(X),
+	read(Y),
+	whoarethey(Y,X,S),
+	write(X),write(' - '),write(S),write(' для '),write_ln(Y),
+	main(_).
+run(4):-
+	write_ln('Введите имя:'),
+	read(X),
+	add_male(X),
+	main(_).
+run(5):-
+	write_ln('Введите имя:'),
+	read(X),
+	add_female(X),
+	main(_).
+run(6):-
+	write_ln('Введите имя родителя:'),
+	read(X),
+	write_ln('Введите имя детеныша:'),
+	read(Y),
+	add_parent(X,Y),
+	main(_).
+run(7):-
+	write_ln('Введите два имя:'),
+	read(X),
+	read(Y),
+	add_sp(X,Y),
+	main(_).
+
+prerun():-read(X),run(X).
+
+main(_):-
+	write_ln(''),
+	write_ln('Введите команду:'),
+	prerun().
+
+:-write_ln(' Привет мир! '),
+	write_ln('Программа для работы с базой данных родственных отношений'),
+	write_ln('0 - закончить работу'),
+	write_ln('1 - найти родственика по родственной связи'),
+	write_ln('2 - выводит все родственные отношения для кого-то'),
+	write_ln('3 - выводит родственное отношение для двух индивидумов'),
+	write_ln('4 - добавить мужчину'),
+	write_ln('5 - добавить женщину'),
+	write_ln('6 - добавить связь родитель-детеныш'),
+	write_ln('7 - создает пару муж-жена'),
+	write_ln('').
+:-main(_).
